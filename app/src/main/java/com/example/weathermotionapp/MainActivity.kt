@@ -58,7 +58,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             WeatherMotionAppTheme {
-                LoginPage()
+                //LoginPage()
+                HomePage()
             }
         }
     }
@@ -88,12 +89,63 @@ fun LogoApp() {
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "main logo weather",
-            modifier = Modifier.size(120.dp).align(Alignment.Center)
+            modifier = Modifier
+                .size(120.dp)
+                .align(Alignment.Center)
         )
         Image(
             painter = painterResource(id = R.drawable.shake),
             contentDescription = "main logo shake",
             modifier = Modifier.size(200.dp).align(Alignment.CenterStart)
         )
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomePage()  {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Home Page") },
+                colors = topAppBarColors(
+                    containerColor = Color.Cyan
+                ),
+                actions = {
+                    IconButton(onClick = {}) {
+                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                    }
+                }
+            )
+        },
+        bottomBar = {
+            BottomAppBar(
+                containerColor = Color.Cyan
+            ) {
+                IconButton(onClick = {}) {
+                    Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
+                }
+
+                IconButton(onClick = {}) {
+                    Icon(Icons.Filled.Settings, contentDescription = "Settings", tint = Color.White)
+                }
+            }
+        }
+    ) { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues)) {
+            Card(
+                border = BorderStroke(1.dp, Color.Blue),
+                modifier = Modifier.size(width = 300.dp, height = 250.dp).padding(20.dp)
+            ) {
+                Text(text = "Card for weather data", modifier = Modifier.padding(20.dp))
+            }
+            Card(
+                border = BorderStroke(1.dp, Color.Blue),
+                modifier = Modifier.size(width = 300.dp, height = 250.dp).padding(20.dp)
+            ) {
+                Text(text = "Card for position data", modifier = Modifier.padding(20.dp))
+            }
+        }
     }
 }
