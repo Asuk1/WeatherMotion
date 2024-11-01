@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -63,7 +64,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             WeatherMotionAppTheme {
-                //LoginPage()
                 AppNavHost()
             }
         }
@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
 
 private var yourName = mutableStateOf("Your name")
 @Composable
-fun LoginPage() {
+fun LoginPage(navController: NavController) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -85,6 +85,9 @@ fun LoginPage() {
             value = yourName.value,
             onValueChange = {yourName.value = it}
         )
+        Button(onClick = {navController.navigate("home")}) {
+            Text(text = "Log in")
+        }
     }
 }
 
@@ -110,7 +113,8 @@ fun LogoApp() {
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = "home") {
+    NavHost(navController, startDestination = "login") {
+        composable("login") { LoginPage(navController)}
         composable("home") { HomePage(navController) }
         composable("settings") { SettingPage(navController) }
     }
@@ -215,7 +219,7 @@ fun SettingPage(navController: NavController) {
                 }
                 Spacer(modifier = Modifier.height(30.dp))
                 Row {
-                    ExtendedFloatingActionButton(onClick = {}) {
+                    ExtendedFloatingActionButton(onClick = {navController.navigate("login")}) {
                         Icon(
                             Icons.Filled.ExitToApp,
                             "Logout",
