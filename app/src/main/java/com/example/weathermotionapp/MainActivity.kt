@@ -36,6 +36,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -50,6 +51,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.weathermotionapp.ui.theme.WeatherMotionAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -59,8 +64,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             WeatherMotionAppTheme {
                 //LoginPage()
-                //HomePage()
-                SettingPage()
+                AppNavHost()
             }
         }
     }
@@ -90,19 +94,31 @@ fun LogoApp() {
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "main logo weather",
-            modifier = Modifier.size(120.dp).align(Alignment.Center)
+            modifier = Modifier
+                .size(120.dp)
+                .align(Alignment.Center)
         )
         Image(
             painter = painterResource(id = R.drawable.shake),
             contentDescription = "main logo shake",
-            modifier = Modifier.size(200.dp).align(Alignment.CenterStart)
+            modifier = Modifier
+                .size(200.dp)
+                .align(Alignment.CenterStart)
         )
+    }
+}
+@Composable
+fun AppNavHost() {
+    val navController = rememberNavController()
+    NavHost(navController, startDestination = "home") {
+        composable("home") { HomePage(navController) }
+        composable("settings") { SettingPage(navController) }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePage()  {
+fun HomePage(navController: NavController)  {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -124,8 +140,7 @@ fun HomePage()  {
                 IconButton(onClick = {}) {
                     Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
                 }
-
-                IconButton(onClick = {}) {
+                IconButton(onClick = { navController.navigate("settings") }) {
                     Icon(Icons.Filled.Settings, contentDescription = "Settings", tint = Color.White)
                 }
             }
@@ -134,13 +149,17 @@ fun HomePage()  {
         Column(modifier = Modifier.padding(paddingValues)) {
             Card(
                 border = BorderStroke(1.dp, Color.Blue),
-                modifier = Modifier.size(width = 300.dp, height = 250.dp).padding(20.dp)
+                modifier = Modifier
+                    .size(width = 300.dp, height = 250.dp)
+                    .padding(20.dp)
             ) {
                 Text(text = "Card for weather data", modifier = Modifier.padding(20.dp))
             }
             Card(
                 border = BorderStroke(1.dp, Color.Blue),
-                modifier = Modifier.size(width = 300.dp, height = 250.dp).padding(20.dp)
+                modifier = Modifier
+                    .size(width = 300.dp, height = 250.dp)
+                    .padding(20.dp)
             ) {
                 Text(text = "Card for position data", modifier = Modifier.padding(20.dp))
             }
@@ -149,14 +168,14 @@ fun HomePage()  {
 }
 
 @Composable
-fun SettingPage() {
+fun SettingPage(navController: NavController) {
     Column {
         Scaffold(
             bottomBar = {
                 BottomAppBar(
                     containerColor = Color.Cyan
                 ) {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {navController.navigate("home")}) {
                         Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
                     }
 
@@ -166,12 +185,18 @@ fun SettingPage() {
                 }
             }
         ) { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues).fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                Icon(Icons.Filled.AccountCircle, "Person name", modifier = Modifier.size(150.dp).align(Alignment.CenterHorizontally))
+            Column(modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                Icon(Icons.Filled.AccountCircle, "Person name", modifier = Modifier
+                    .size(150.dp)
+                    .align(Alignment.CenterHorizontally))
                 Spacer(modifier = Modifier.height(50.dp))
                 Row {
                     Card {
-                        Icon(Icons.Filled.Person, "Person name", modifier = Modifier.size(50.dp).align(Alignment.CenterHorizontally))
+                        Icon(Icons.Filled.Person, "Person name", modifier = Modifier
+                            .size(50.dp)
+                            .align(Alignment.CenterHorizontally))
                         Text(text = "Your name")
                     }
                 }
@@ -181,7 +206,9 @@ fun SettingPage() {
                         Icon(
                             Icons.Filled.Build,
                             "Lighting mode",
-                            modifier = Modifier.size(50.dp).align(Alignment.CenterVertically)
+                            modifier = Modifier
+                                .size(50.dp)
+                                .align(Alignment.CenterVertically)
                         )
                         Text(text = "Settings")
                     }
@@ -192,7 +219,9 @@ fun SettingPage() {
                         Icon(
                             Icons.Filled.ExitToApp,
                             "Logout",
-                            modifier = Modifier.size(50.dp).align(Alignment.CenterVertically)
+                            modifier = Modifier
+                                .size(50.dp)
+                                .align(Alignment.CenterVertically)
                         )
                         Text(text = "Exit")
                     }
