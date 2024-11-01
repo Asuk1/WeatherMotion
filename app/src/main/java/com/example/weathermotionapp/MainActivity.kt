@@ -59,7 +59,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             WeatherMotionAppTheme {
                 //LoginPage()
-                HomePage()
+                //HomePage()
+                SettingPage()
             }
         }
     }
@@ -89,9 +90,7 @@ fun LogoApp() {
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "main logo weather",
-            modifier = Modifier
-                .size(120.dp)
-                .align(Alignment.Center)
+            modifier = Modifier.size(120.dp).align(Alignment.Center)
         )
         Image(
             painter = painterResource(id = R.drawable.shake),
@@ -100,7 +99,6 @@ fun LogoApp() {
         )
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -145,6 +143,60 @@ fun HomePage()  {
                 modifier = Modifier.size(width = 300.dp, height = 250.dp).padding(20.dp)
             ) {
                 Text(text = "Card for position data", modifier = Modifier.padding(20.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun SettingPage() {
+    Column {
+        Scaffold(
+            bottomBar = {
+                BottomAppBar(
+                    containerColor = Color.Cyan
+                ) {
+                    IconButton(onClick = {}) {
+                        Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
+                    }
+
+                    IconButton(onClick = {}) {
+                        Icon(Icons.Filled.Settings, contentDescription = "Settings", tint = Color.White)
+                    }
+                }
+            }
+        ) { paddingValues ->
+            Column(modifier = Modifier.padding(paddingValues).fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                Icon(Icons.Filled.AccountCircle, "Person name", modifier = Modifier.size(150.dp).align(Alignment.CenterHorizontally))
+                Spacer(modifier = Modifier.height(50.dp))
+                Row {
+                    Card {
+                        Icon(Icons.Filled.Person, "Person name", modifier = Modifier.size(50.dp).align(Alignment.CenterHorizontally))
+                        Text(text = "Your name")
+                    }
+                }
+                Spacer(modifier = Modifier.height(30.dp))
+                Row {
+                    ExtendedFloatingActionButton(onClick = {}) {
+                        Icon(
+                            Icons.Filled.Build,
+                            "Lighting mode",
+                            modifier = Modifier.size(50.dp).align(Alignment.CenterVertically)
+                        )
+                        Text(text = "Settings")
+                    }
+                }
+                Spacer(modifier = Modifier.height(30.dp))
+                Row {
+                    ExtendedFloatingActionButton(onClick = {}) {
+                        Icon(
+                            Icons.Filled.ExitToApp,
+                            "Logout",
+                            modifier = Modifier.size(50.dp).align(Alignment.CenterVertically)
+                        )
+                        Text(text = "Exit")
+                    }
+                }
             }
         }
     }
