@@ -71,6 +71,8 @@ class MainActivity : ComponentActivity() {
 }
 
 private var yourName = mutableStateOf("Your name")
+//Mutable var that will be use later to stock the name
+
 @Composable
 fun LoginPage(navController: NavController) {
     Column(
@@ -79,15 +81,19 @@ fun LoginPage(navController: NavController) {
     ){
         HorizontalDivider(modifier = Modifier.height(50.dp))
         Text(text = "WeatherMotion", color = Color.Blue, fontSize = 30.sp)
+        //Name of my app
         HorizontalDivider(modifier = Modifier.height(24.dp))
         LogoApp()
+        //My custom logo 
         TextField(
             value = yourName.value,
             onValueChange = {yourName.value = it}
         )
+        //Text field where you should enter your name to log in
         Button(onClick = {navController.navigate("home")}) {
             Text(text = "Log in")
         }
+        //Login button to click to be able to access main ressource
     }
 }
 
@@ -110,6 +116,8 @@ fun LogoApp() {
         )
     }
 }
+//My logo for the application: it is a weather icon inside of a shaking phone
+
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
@@ -119,6 +127,7 @@ fun AppNavHost() {
         composable("settings") { SettingPage(navController) }
     }
 }
+//The function that controls the navigation between my screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -130,13 +139,9 @@ fun HomePage(navController: NavController)  {
                 colors = topAppBarColors(
                     containerColor = Color.Blue
                 ),
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
-                    }
-                }
             )
         },
+        //Simple top bar with a title
         bottomBar = {
             BottomAppBar(
                 containerColor = Color.Blue
@@ -149,6 +154,7 @@ fun HomePage(navController: NavController)  {
                 }
             }
         }
+        //Simple bottom bar with two icon for navigation between settings screen and main screen 
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             Card(
@@ -159,6 +165,7 @@ fun HomePage(navController: NavController)  {
             ) {
                 Text(text = "Card for weather data", modifier = Modifier.padding(20.dp))
             }
+            //The card that will host my weather api for the next milestone
             Card(
                 border = BorderStroke(1.dp, Color.Blue),
                 modifier = Modifier
@@ -167,6 +174,7 @@ fun HomePage(navController: NavController)  {
             ) {
                 Text(text = "Card for position data", modifier = Modifier.padding(20.dp))
             }
+            //The card that will host device information for sensor
         }
     }
 }
@@ -188,6 +196,7 @@ fun SettingPage(navController: NavController) {
                     }
                 }
             }
+            //Same as before simple bottom bar with two icon for navigation between settings screen and main screen 
         ) { paddingValues ->
             Column(modifier = Modifier
                 .padding(paddingValues)
@@ -204,6 +213,7 @@ fun SettingPage(navController: NavController) {
                         Text(text = "Your name")
                     }
                 }
+                // Card that will host the name you put when log in for next milestone
                 Spacer(modifier = Modifier.height(30.dp))
                 Row {
                     ExtendedFloatingActionButton(onClick = {}) {
@@ -217,6 +227,7 @@ fun SettingPage(navController: NavController) {
                         Text(text = "Settings")
                     }
                 }
+                //Fab that will redirect into the settings options like switching between light and dark mode in futher milestone
                 Spacer(modifier = Modifier.height(30.dp))
                 Row {
                     ExtendedFloatingActionButton(onClick = {navController.navigate("login")}) {
@@ -230,6 +241,7 @@ fun SettingPage(navController: NavController) {
                         Text(text = "Exit")
                     }
                 }
+                //Fab that will redirect you to the login page
             }
         }
     }
