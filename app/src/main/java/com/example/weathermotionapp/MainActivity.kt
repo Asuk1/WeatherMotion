@@ -128,7 +128,7 @@ fun HomePage(navController: NavController)  {
             TopAppBar(
                 title = { Text("Home Page") },
                 colors = topAppBarColors(
-                    containerColor = Color.Cyan
+                    containerColor = Color.Blue
                 ),
                 actions = {
                     IconButton(onClick = {}) {
@@ -139,7 +139,7 @@ fun HomePage(navController: NavController)  {
         },
         bottomBar = {
             BottomAppBar(
-                containerColor = Color.Cyan
+                containerColor = Color.Blue
             ) {
                 IconButton(onClick = {}) {
                     Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
@@ -177,7 +177,7 @@ fun SettingPage(navController: NavController) {
         Scaffold(
             bottomBar = {
                 BottomAppBar(
-                    containerColor = Color.Cyan
+                    containerColor = Color.Blue
                 ) {
                     IconButton(onClick = {navController.navigate("home")}) {
                         Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
