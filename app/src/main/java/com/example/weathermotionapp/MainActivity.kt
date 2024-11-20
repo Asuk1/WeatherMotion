@@ -1,5 +1,7 @@
 package com.example.weathermotionapp
 
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -48,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalMapOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -125,6 +128,7 @@ fun AppNavHost() {
         composable("login") { LoginPage(navController)}
         composable("home") { HomePage(navController) }
         composable("settings") { SettingPage(navController) }
+        composable("settings button") { SettingsButtonPage(navController)}
     }
 }
 //The function that controls the navigation between my screen
@@ -187,36 +191,48 @@ fun SettingPage(navController: NavController) {
                 BottomAppBar(
                     containerColor = Color.Blue
                 ) {
-                    IconButton(onClick = {navController.navigate("home")}) {
+                    IconButton(onClick = { navController.navigate("home") }) {
                         Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
                     }
 
                     IconButton(onClick = {}) {
-                        Icon(Icons.Filled.Settings, contentDescription = "Settings", tint = Color.White)
+                        Icon(
+                            Icons.Filled.Settings,
+                            contentDescription = "Settings",
+                            tint = Color.White
+                        )
                     }
                 }
             }
             //Same as before simple bottom bar with two icon for navigation between settings screen and main screen 
         ) { paddingValues ->
-            Column(modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                Icon(Icons.Filled.AccountCircle, "Person name", modifier = Modifier
-                    .size(150.dp)
-                    .align(Alignment.CenterHorizontally))
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    Icons.Filled.AccountCircle, "Person name", modifier = Modifier
+                        .size(150.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
                 Spacer(modifier = Modifier.height(50.dp))
                 Row {
                     Card {
-                        Icon(Icons.Filled.Person, "Person name", modifier = Modifier
-                            .size(50.dp)
-                            .align(Alignment.CenterHorizontally))
+                        Icon(
+                            Icons.Filled.Person, "Person name", modifier = Modifier
+                                .size(50.dp)
+                                .align(Alignment.CenterHorizontally)
+                        )
                         Text(text = "Your name")
                     }
                 }
                 // Card that will host the name you put when log in for next milestone
                 Spacer(modifier = Modifier.height(30.dp))
                 Row {
-                    ExtendedFloatingActionButton(onClick = {}) {
+                    ExtendedFloatingActionButton(onClick = { navController.navigate("settings button") }) {
                         Icon(
                             Icons.Filled.Build,
                             "Lighting mode",
@@ -227,10 +243,10 @@ fun SettingPage(navController: NavController) {
                         Text(text = "Settings")
                     }
                 }
-                //Fab that will redirect into the settings options like switching between light and dark mode in futher milestone
+                //Fab that will redirect into the settings options and intent
                 Spacer(modifier = Modifier.height(30.dp))
                 Row {
-                    ExtendedFloatingActionButton(onClick = {navController.navigate("login")}) {
+                    ExtendedFloatingActionButton(onClick = { navController.navigate("login") }) {
                         Icon(
                             Icons.Filled.ExitToApp,
                             "Logout",
@@ -242,6 +258,71 @@ fun SettingPage(navController: NavController) {
                     }
                 }
                 //Fab that will redirect you to the login page
+            }
+        }
+    }
+}
+
+@Composable
+fun SettingsButtonPage(navController: NavController) {
+    val context = LocalContext.current
+    Column {
+        Scaffold(
+            bottomBar = {
+                BottomAppBar(
+                    containerColor = Color.Blue
+                ) {
+                    IconButton(onClick = { navController.navigate("home") }) {
+                        Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
+                    }
+
+                    IconButton(onClick = {navController.navigate("settings")}) {
+                        Icon(
+                            Icons.Filled.Settings,
+                            contentDescription = "Settings",
+                            tint = Color.White
+                        )
+                    }
+                }
+            }
+            //Same as before simple bottom bar with two icon for navigation between settings screen and main screen
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Spacer(modifier = Modifier.height(30.dp))
+                Row {
+                    Button(
+                        onClick = {
+                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, "Check out the WeatherMotion App!")
+                            }
+                            context.startActivity(
+                                Intent.createChooser(
+                                    shareIntent,
+                                    "Share via"
+                                )
+                            )
+                        },
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(text = "Share App")
+                    }
+                }
+                //Intent to share the app
+                Spacer(modifier = Modifier.height(30.dp))
+                Button(onClick = {
+                    val settingsIntent = Intent(android.provider.Settings.ACTION_WIFI_SETTINGS)
+                    context.startActivity(settingsIntent)
+                }) {
+                    Text("Open Wi-Fi Settings")
+                }
+                //Intent to open the wifi page to able to be connected
             }
         }
     }
