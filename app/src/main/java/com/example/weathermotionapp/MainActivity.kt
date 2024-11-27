@@ -499,7 +499,7 @@ fun SensorInfoCard(navController: NavController) {
                             val y = it.values[1]
                             val z = it.values[2]//x,y,z value from sensor gyro
                             gyroscopeData.value = "Gyroscope: x=$x, y=$y, z=$z"
-                            if (Math.abs(x) > 20|| Math.abs(y) > 20 || Math.abs(z) > 20) {
+                            if (Math.abs(x) > 2|| Math.abs(y) > 2 || Math.abs(z) > 2) {
                                 // Trigger navigation to settings on rotation
                                 navController.navigate("settings")
                             }
