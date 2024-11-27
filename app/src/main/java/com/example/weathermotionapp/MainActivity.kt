@@ -186,7 +186,7 @@ fun HomePage(navController: NavController) {
                     if (it.sensor.type == Sensor.TYPE_LIGHT) { //sensor check
                         val lux = it.values[0] //retrieve the light level in lux
                         lightLevel.value = "Ambient Light: $lux lux"
-                        isDarkMode = lux < 50 //switch to dark mode if the light level is under 50
+                        isDarkMode = lux < 60 //switch to dark mode if the light level is under 50
                     }
                 }
             }
@@ -252,28 +252,45 @@ fun SettingPage(navController: NavController) {
     val context = LocalContext.current
     val lightLevel = remember { mutableStateOf("Detecting actual light") }
     var isDarkMode by remember { mutableStateOf(false) } //mutable to detect if the app should be on light or dark mode
+    val accelerometerData = remember { mutableStateOf("Loading actual accelerometer data") } //mutable to store accelerometer data
 
     DisposableEffect(context) {
         val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT) //device light sensor
-
+        val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) //device accelerometer sensor
         val listener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent?) {
                 event?.let {
-                    if (it.sensor.type == Sensor.TYPE_LIGHT) { //sensor check
-                        val lux = it.values[0] //retrieve the light level in lux
-                        lightLevel.value = "Ambient Light: $lux lux"
-                        isDarkMode = lux < 50 //switch to dark mode if the light level is under 50
+                    when (it.sensor.type) {
+                        Sensor.TYPE_LIGHT -> {
+                            // Retrieve the ambient light level in lux.
+                            val lux = it.values[0]
+                            lightLevel.value = "Ambient Light: $lux lux"
+                            isDarkMode = lux < 60 // Enable dark mode if the light level is low.
+                        }
+                        Sensor.TYPE_ACCELEROMETER -> {
+                            // Retrieve accelerometer values for x, y, and z axes.
+                            val x = it.values[0]
+                            val y = it.values[1]
+                            val z = it.values[2]
+                            accelerometerData.value = "Accelerometer: x=$x, y=$y, z=$z"
+                            if (Math.abs(x) > 8 || Math.abs(y) > 8) {
+                                navController.navigate("home") // Redirect to home page with rotation
+                            }
+                        }
                     }
                 }
             }
-
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
         }
 
         lightSensor?.let {
             sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_NORMAL)
         }//register the light sensor listener to start receiving updates
+
+        accelerometer?.let {
+            sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_NORMAL)
+        }//register the accelerometer sensor listener to start receiving updates
 
         onDispose {
             sensorManager.unregisterListener(listener)
@@ -472,16 +489,13 @@ fun SensorInfoCard(navController: NavController) {
                             val y = it.values[1]
                             val z = it.values[2] //x,y,z value from sensor accelerometer
                             accelerometerData.value = "Accelerometer: x=$x, y=$y, z=$z"
-                           /* if (Math.abs(x) > 8 || Math.abs(y) > 8) {
-                                navController.navigate("settings") // Redirect to settings page with tilt
-                            }*/ // is on comment because it hurts to enable it on android studio
                         }
                         Sensor.TYPE_GYROSCOPE -> {
                             val x = it.values[0]
                             val y = it.values[1]
                             val z = it.values[2]//x,y,z value from sensor gyro
                             gyroscopeData.value = "Gyroscope: x=$x, y=$y, z=$z"
-                            if (Math.abs(x) > 1 || Math.abs(y) > 1 || Math.abs(z) > 1) {
+                            if (Math.abs(x) > 20|| Math.abs(y) > 20 || Math.abs(z) > 20) {
                                 // Trigger navigation to settings on rotation
                                 navController.navigate("settings")
                             }
@@ -516,3 +530,4 @@ fun SensorInfoCard(navController: NavController) {
         }
     }
 }
+
