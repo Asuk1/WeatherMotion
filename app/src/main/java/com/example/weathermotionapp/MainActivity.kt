@@ -65,6 +65,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.*
 
 
@@ -119,17 +120,20 @@ fun LoginPage(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             HorizontalDivider(modifier = Modifier.height(50.dp))
-            Text(text = "WeatherMotion", color = Color.Blue, fontSize = 30.sp)
+            Text(text = "WeatherMotion", color = Color(0xFF97B6D3), fontSize = 30.sp)
             //Name of my app
-            HorizontalDivider(modifier = Modifier.height(24.dp))
+            HorizontalDivider(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(30.dp))
             LogoApp()
             //My custom logo
+            Spacer(modifier = Modifier.height(30.dp))
             TextField(
                 value = yourName.value,
                 onValueChange = { yourName.value = it }
             )
             //Text field where you should enter your name to log in
-            Button(onClick = { navController.navigate("home") }) {
+            Spacer(modifier = Modifier.height(30.dp))
+            Button(onClick = { navController.navigate("home") }, colors = ButtonDefaults.buttonColors(Color(0xFF97B6D3))) {
                 Text(text = "Log in")
             }
             //Login button to click to be able to access main ressource
@@ -205,16 +209,16 @@ fun HomePage(navController: NavController) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Home Page") },
+                    title = { Text("Home Page", color= Color.White) },
                     colors = topAppBarColors(
-                        containerColor = Color.Blue
+                        containerColor = Color(0xFF97B6D3),
                     ),
                 )
             },
             //Simple top bar with a title
             bottomBar = {
                 BottomAppBar(
-                    containerColor = Color.Blue
+                    containerColor = Color(0xFF97B6D3),
                 ) {
                     IconButton(onClick = {}) {
                         Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
@@ -232,7 +236,7 @@ fun HomePage(navController: NavController) {
         ) { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues)) {
                 Card(
-                    border = BorderStroke(1.dp, Color.Blue),
+                    border = BorderStroke(1.dp, Color(0xFF97B6D3)),
                     modifier = Modifier
                         .size(width = 300.dp, height = 250.dp)
                         .padding(20.dp)
@@ -301,7 +305,7 @@ fun SettingPage(navController: NavController) {
             Scaffold(
                 bottomBar = {
                     BottomAppBar(
-                        containerColor = Color.Blue
+                        containerColor = Color(0xFF97B6D3),
                     ) {
                         IconButton(onClick = { navController.navigate("home") }) {
                             Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
@@ -411,7 +415,7 @@ fun SettingsButtonPage(navController: NavController) {
             Scaffold(
                 bottomBar = {
                     BottomAppBar(
-                        containerColor = Color.Blue
+                        containerColor = Color(0xFF97B6D3),
                     ) {
                         IconButton(onClick = { navController.navigate("home") }) {
                             Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
@@ -518,7 +522,7 @@ fun SensorInfoCard(navController: NavController) {
         }//dispose sensor to prevent memory leaks or unnecessary usage
     }
     Card(
-        border = BorderStroke(1.dp, Color.Blue),
+        border = BorderStroke(1.dp, Color(0xFF97B6D3)),
         modifier = Modifier
             .size(width = 300.dp, height = 250.dp)
             .padding(20.dp)
