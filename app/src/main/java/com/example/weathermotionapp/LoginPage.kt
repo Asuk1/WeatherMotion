@@ -40,14 +40,14 @@ import androidx.navigation.NavController
 import com.example.weathermotionapp.ui.theme.CustomColor
 import com.example.weathermotionapp.ui.theme.WeatherMotionAppTheme
 
-private var yourName = mutableStateOf("Your name")
-//Mutable var that will be use later to stock the name
 
 @Composable
 fun LoginPage(navController: NavController) {
     val context = LocalContext.current
     val lightLevel = remember { mutableStateOf("Detecting light acutal light") }
     var isDarkMode by remember { mutableStateOf(false) } //mutable to detect if the app should be on light or dark mode
+    val sharedPreferences = context.getSharedPreferences("user_data", Context.MODE_PRIVATE)//store name into the sharedPreference
+    var yourName by remember { mutableStateOf("") } //the yourName mutable that was here since assignment use to initialize the state of the variable for the name
 
     DisposableEffect(context) {
         val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -112,12 +112,16 @@ fun LoginPage(navController: NavController) {
             //My custom logo
             Spacer(modifier = Modifier.height(30.dp))
             TextField(
-                value = yourName.value,
-                onValueChange = { yourName.value = it }
+                value = yourName,  //the name you will enter
+                onValueChange = { newName -> yourName = newName },  //update the name state when name changes
+                placeholder = {
+                    Text(text = "Enter your name", color = Color.Gray)
+                },//use a placeholder now instead of a harcoding name
             )
             //Text field where you should enter your name to log in
             Spacer(modifier = Modifier.height(30.dp))
-            Button(onClick = { navController.navigate("home") }, colors = ButtonDefaults.buttonColors(
+            Button(onClick = { sharedPreferences.edit().putString("user_name", yourName).apply() //save the entered name to SharedPreferences when user logs in
+                navController.navigate("home") }, colors = ButtonDefaults.buttonColors(
                 CustomColor
             )) {
                 Text(text = "Log in")

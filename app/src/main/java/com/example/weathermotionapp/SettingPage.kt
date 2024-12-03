@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -37,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.weathermotionapp.ui.theme.CustomColor
@@ -45,6 +47,8 @@ import com.example.weathermotionapp.ui.theme.WeatherMotionAppTheme
 @Composable
 fun SettingPage(navController: NavController) {
     val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("user_data", Context.MODE_PRIVATE)//access to shared preference data
+    val savedName = sharedPreferences.getString("user_name", "No name found") ?: "No name found" //the data/name found in shared preference that is the one the user wrote to log in
     val lightLevel = remember { mutableStateOf("Detecting actual light") }
     var isDarkMode by remember { mutableStateOf(false) } //mutable to detect if the app should be on light or dark mode
     val accelerometerData = remember { mutableStateOf("Loading actual accelerometer data") } //mutable to store accelerometer data
@@ -133,7 +137,7 @@ fun SettingPage(navController: NavController) {
                                     .size(50.dp)
                                     .align(Alignment.CenterHorizontally)
                             )
-                            Text(text = "Your name")
+                            Text(text = "$savedName", textAlign = TextAlign.Center, modifier = Modifier.padding(10.dp)) //display the name used to log in by retrieving the data saved into shared preference
                         }
                     }
                     // Card that will host the name you put when log in for next milestone
@@ -164,7 +168,7 @@ fun SettingPage(navController: NavController) {
                             Text(text = "Exit")
                         }
                     }
-                    //Fab that  redirect you to the login page
+                    //Fab that  redirect you to the login page and reset the shared preference name to log in
                 }
             }
         }
