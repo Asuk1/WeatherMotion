@@ -29,7 +29,10 @@ fun AppNavHost() {
     val navController = rememberNavController()
     NavHost(navController, startDestination = "login") {
         composable("login") { LoginPage(navController)}
+        composable("explanation") { ExplanationPage(navController) }
+        composable("next") { ExplanationPageNext(navController) }
         composable("home") { HomePage(navController) }
+        composable("advice") { AdvicePage(navController) }
         composable("settings") { SettingPage(navController) }
         composable("settings button") { SettingsButtonPage(navController)}
     }

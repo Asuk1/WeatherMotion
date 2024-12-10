@@ -8,6 +8,7 @@ import android.hardware.SensorManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -42,12 +43,10 @@ import com.example.weathermotionapp.ui.theme.WeatherMotionAppTheme
 
 
 @Composable
-fun LoginPage(navController: NavController) {
+fun ExplanationPage(navController: NavController) {
     val context = LocalContext.current
     val lightLevel = remember { mutableStateOf("Detecting light acutal light") }
     var isDarkMode by remember { mutableStateOf(false) } //mutable to detect if the app should be on light or dark mode
-    val sharedPreferences = context.getSharedPreferences("user_data", Context.MODE_PRIVATE)//store name into the sharedPreference
-    var yourName by remember { mutableStateOf("") } //the yourName mutable that was here since assignment use to initialize the state of the variable for the name
 
     DisposableEffect(context) {
         val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -77,11 +76,8 @@ fun LoginPage(navController: NavController) {
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            HorizontalDivider(modifier = Modifier.height(50.dp))
-            Text(text = "WeatherMotion", color = CustomColor, fontSize = 30.sp)
-            //Name of my app
-            HorizontalDivider(modifier = Modifier.height(30.dp))
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -97,7 +93,7 @@ fun LoginPage(navController: NavController) {
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "A simple forecasting app with sensor motion made for the people in need",
+                    text = "Welcome to WeatherMotion ! A weather forecasting with device motion detection to provide a solution for people who may have difficulty with touch interfaces or struggle with technology.",
                     modifier = Modifier
                         .align(Alignment.Center)
                         .padding(horizontal = 20.dp),
@@ -107,47 +103,16 @@ fun LoginPage(navController: NavController) {
                     lineHeight = 24.sp,
                     letterSpacing = 1.5.sp  // add spacing between letters for a more stylized effect
                 )//description of my app to the user
-            }//box for the description of my app to make it more attractive and understandable to the user
-            LogoApp()
-            //My custom logo
+            }//bow for the description of my app to make it more attractive and understandable to the use
             Spacer(modifier = Modifier.height(30.dp))
-            TextField(
-                value = yourName,  //the name you will enter
-                onValueChange = { newName -> yourName = newName },  //update the name state when name changes
-                placeholder = {
-                    Text(text = "Enter your name", color = Color.Gray)
-                },//use a placeholder now instead of a harcoding name
-            )
-            //Text field where you should enter your name to log in
-            Spacer(modifier = Modifier.height(30.dp))
-            Button(onClick = { sharedPreferences.edit().putString("user_name", yourName).apply() //save the entered name to SharedPreferences when user logs in
-                navController.navigate("explanation") }, colors = ButtonDefaults.buttonColors(
+            Button(onClick = {
+                navController.navigate("next") }, colors = ButtonDefaults.buttonColors(
                 CustomColor
             )) {
-                Text(text = "Log in")
+                Text(text = "Next ->")
             }
-            //Login button to click to be able to access main ressource
+            //Next button to click to be able to access additional infos
         }
     }
 }
 
-@Composable
-fun LogoApp() {
-    Box {
-        Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "main logo weather",
-            modifier = Modifier
-                .size(120.dp)
-                .align(Alignment.Center)
-        )
-        Image(
-            painter = painterResource(id = R.drawable.shake),
-            contentDescription = "main logo shake",
-            modifier = Modifier
-                .size(200.dp)
-                .align(Alignment.CenterStart)
-        )
-    }
-}
-//My logo for the application: it is a weather icon inside of a shaking phone

@@ -42,12 +42,10 @@ import com.example.weathermotionapp.ui.theme.WeatherMotionAppTheme
 
 
 @Composable
-fun LoginPage(navController: NavController) {
+fun ExplanationPageNext(navController: NavController) {
     val context = LocalContext.current
     val lightLevel = remember { mutableStateOf("Detecting light acutal light") }
     var isDarkMode by remember { mutableStateOf(false) } //mutable to detect if the app should be on light or dark mode
-    val sharedPreferences = context.getSharedPreferences("user_data", Context.MODE_PRIVATE)//store name into the sharedPreference
-    var yourName by remember { mutableStateOf("") } //the yourName mutable that was here since assignment use to initialize the state of the variable for the name
 
     DisposableEffect(context) {
         val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -78,10 +76,6 @@ fun LoginPage(navController: NavController) {
             modifier = Modifier.fillMaxSize().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            HorizontalDivider(modifier = Modifier.height(50.dp))
-            Text(text = "WeatherMotion", color = CustomColor, fontSize = 30.sp)
-            //Name of my app
-            HorizontalDivider(modifier = Modifier.height(30.dp))
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -97,7 +91,7 @@ fun LoginPage(navController: NavController) {
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "A simple forecasting app with sensor motion made for the people in need",
+                    text = "Two things to remember : Roatate or tilt your phone to navigate ! You can also see your device information on these sensors.",
                     modifier = Modifier
                         .align(Alignment.Center)
                         .padding(horizontal = 20.dp),
@@ -106,48 +100,72 @@ fun LoginPage(navController: NavController) {
                     fontStyle = FontStyle.Italic,  // set the text style to italic  and bold for a stylish look
                     lineHeight = 24.sp,
                     letterSpacing = 1.5.sp  // add spacing between letters for a more stylized effect
-                )//description of my app to the user
+                )//description of the sensor use of my app to the user
             }//box for the description of my app to make it more attractive and understandable to the user
-            LogoApp()
-            //My custom logo
             Spacer(modifier = Modifier.height(30.dp))
-            TextField(
-                value = yourName,  //the name you will enter
-                onValueChange = { newName -> yourName = newName },  //update the name state when name changes
-                placeholder = {
-                    Text(text = "Enter your name", color = Color.Gray)
-                },//use a placeholder now instead of a harcoding name
-            )
-            //Text field where you should enter your name to log in
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 20.dp)
+                    .background(
+                        color = Color.White
+                    )
+                    .border(
+                        width = 2.dp,
+                        color = CustomColor,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "On the menu you can see some advice based on the weather ! It is scrollable by the way !",
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(horizontal = 20.dp),
+                    color = CustomColor,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic,  // set the text style to italic  and bold for a stylish look
+                    lineHeight = 24.sp,
+                    letterSpacing = 1.5.sp  // add spacing between letters for a more stylized effect
+                )//description of what you can do on the app
+            }//box for the description of my app to make it more attractive and understandable to the user
             Spacer(modifier = Modifier.height(30.dp))
-            Button(onClick = { sharedPreferences.edit().putString("user_name", yourName).apply() //save the entered name to SharedPreferences when user logs in
-                navController.navigate("explanation") }, colors = ButtonDefaults.buttonColors(
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 20.dp)
+                    .background(
+                        color = Color.White
+                    )
+                    .border(
+                        width = 2.dp,
+                        color = CustomColor,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "On the settings screen you can access to more settings to verify your wifi or share the app to your friends to support us !",
+                    //well I said support us but i am a single dev, it is to pretend that it is an app build by an active team...
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(horizontal = 20.dp),
+                    color = CustomColor,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic,  // set the text style to italic  and bold for a stylish look
+                    lineHeight = 24.sp,
+                    letterSpacing = 1.5.sp  // add spacing between letters for a more stylized effect
+                )//description of other resources the user can do on settings
+            }//box for the description of my app to make it more attractive and understandable to the user
+            Spacer(modifier = Modifier.height(30.dp))
+            Button(onClick = {
+                navController.navigate("home") }, colors = ButtonDefaults.buttonColors(
                 CustomColor
             )) {
-                Text(text = "Log in")
+                Text(text = "Let's start the app !")
             }
-            //Login button to click to be able to access main ressource
+            //Button to click to be able to really access main resource of the app
         }
     }
 }
 
-@Composable
-fun LogoApp() {
-    Box {
-        Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "main logo weather",
-            modifier = Modifier
-                .size(120.dp)
-                .align(Alignment.Center)
-        )
-        Image(
-            painter = painterResource(id = R.drawable.shake),
-            contentDescription = "main logo shake",
-            modifier = Modifier
-                .size(200.dp)
-                .align(Alignment.CenterStart)
-        )
-    }
-}
-//My logo for the application: it is a weather icon inside of a shaking phone

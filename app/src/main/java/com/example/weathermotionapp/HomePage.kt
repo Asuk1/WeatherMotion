@@ -13,9 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +45,7 @@ import com.example.weathermotionapp.ui.theme.WeatherMotionAppTheme
 @Composable
 fun HomePage(navController: NavController) {
     val context = LocalContext.current
+    var menuExpanded by remember { mutableStateOf(false) }
     val lightLevel = remember { mutableStateOf("Detecting actual light ") }
     var isDarkMode by remember { mutableStateOf(false) } //mutable to detect if the app should be on light or dark mode
 
@@ -77,7 +81,31 @@ fun HomePage(navController: NavController) {
                     colors = topAppBarColors(
                         containerColor = CustomColor,
                     ),
-                )
+                    actions = {
+                        IconButton(onClick = { menuExpanded = true }) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "More Options",
+                                tint = Color.White
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = {
+                                menuExpanded = false
+                            }
+                        ) {
+                            DropdownMenuItem(
+                                onClick = {
+                                    menuExpanded = false
+                                    navController.navigate("advice")
+                                },
+                                text = {
+                                    Text("Advice")
+                                }
+                            )
+                        }
+                    })
             },
             //Simple top bar with a title
             bottomBar = {
