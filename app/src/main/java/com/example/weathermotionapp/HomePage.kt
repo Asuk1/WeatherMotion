@@ -5,7 +5,10 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.net.http.HttpResponseCache.install
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -28,6 +31,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,9 +49,17 @@ import com.example.weathermotionapp.ui.theme.WeatherMotionAppTheme
 @Composable
 fun HomePage(navController: NavController) {
     val context = LocalContext.current
-    var menuExpanded by remember { mutableStateOf(false) }
+    var countryMenuExpanded by remember { mutableStateOf(false) }  //country dropdown
+    var moreOptionsMenuExpanded by remember { mutableStateOf(false) } //more options dropdown (could have named advice options instead but in principle if I want to add more option later)
     val lightLevel = remember { mutableStateOf("Detecting actual light ") }
     var isDarkMode by remember { mutableStateOf(false) } //mutable to detect if the app should be on light or dark mode
+
+    var isLoading by remember { mutableStateOf(true) } //state variable to track whether data is currently being loaded
+    var weatherData by remember { mutableStateOf<WeatherResponse?>(null) }
+
+    var selectedCountry by remember { mutableStateOf<Country?>(null) }
+    var countryName by remember { mutableStateOf("Select a country") }
+    val interactionSource = remember { MutableInteractionSource() } //state object to handle user interaction events
 
     DisposableEffect(context) {
         val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -62,6 +74,7 @@ fun HomePage(navController: NavController) {
                     }
                 }
             }
+
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
         }
 
@@ -73,16 +86,25 @@ fun HomePage(navController: NavController) {
             sensorManager.unregisterListener(listener)
         }//dispose sensor to prevent memory leaks or unnecessary usage
     }
+
+    LaunchedEffect(selectedCountry) {
+        selectedCountry?.let {
+            isLoading = true
+            weatherData = fetchWeather(it.latitude, it.longitude) //fetch weather data for the selected country's latitude and longitude
+            isLoading = false
+        }
+    } //launch the weather api data when country selected (it is like a useeffect in react)
+
     WeatherMotionAppTheme(darkTheme = isDarkMode) { //enable sensor is all the actual screen
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Home Page", color= Color.White) },
+                    title = { Text("Home Page", color = Color.White) },
                     colors = topAppBarColors(
                         containerColor = CustomColor,
                     ),
                     actions = {
-                        IconButton(onClick = { menuExpanded = true }) {
+                        IconButton(onClick = { moreOptionsMenuExpanded = true }) {
                             Icon(
                                 imageVector = Icons.Default.MoreVert,
                                 contentDescription = "More Options",
@@ -90,14 +112,14 @@ fun HomePage(navController: NavController) {
                             )
                         }
                         DropdownMenu(
-                            expanded = menuExpanded,
+                            expanded = moreOptionsMenuExpanded,
                             onDismissRequest = {
-                                menuExpanded = false
+                                moreOptionsMenuExpanded = false
                             }
                         ) {
                             DropdownMenuItem(
                                 onClick = {
-                                    menuExpanded = false
+                                    moreOptionsMenuExpanded = false
                                     navController.navigate("advice")
                                 },
                                 text = {
@@ -105,9 +127,9 @@ fun HomePage(navController: NavController) {
                                 }
                             )
                         }
-                    })
+                    }) //dropdown menu for advice
             },
-            //Simple top bar with a title
+            //top bar with a title and menu on the right
             bottomBar = {
                 BottomAppBar(
                     containerColor = CustomColor,
@@ -127,18 +149,63 @@ fun HomePage(navController: NavController) {
             //Simple bottom bar with two icon for navigation between settings screen and main screen
         ) { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues)) {
-                Card(
-                    border = BorderStroke(1.dp, CustomColor),
+                Text(
+                    text = "Selected Country: $countryName by clicking here",
                     modifier = Modifier
-                        .size(width = 300.dp, height = 250.dp)
-                        .padding(20.dp)
+                        .padding(16.dp)
+                        .clickable {
+                            countryMenuExpanded = !countryMenuExpanded //toggle the dropdown
+                        }
+                )
+
+                DropdownMenu(
+                    expanded = countryMenuExpanded,
+                    onDismissRequest = { countryMenuExpanded = false }
                 ) {
-                    Text(text = "Card for weather data", modifier = Modifier.padding(20.dp))
+                    countries.forEach { country ->
+                        DropdownMenuItem(
+                            text = { Text(text = country.name) },
+                            onClick = {
+                                countryMenuExpanded= false
+                                selectedCountry = country //update the selectedCountry state
+                                countryName = country.name //updated the displayed Country name
+                            },
+                            interactionSource = interactionSource
+                        )
+                    }
                 }
-                //The card that will host my weather api for the next milestone
+                //dropdown menu for the country list
+                Card(
+                    border = BorderStroke(1.dp, Color.Blue),
+                    modifier = Modifier
+                        .size(width = 300.dp, height = 175.dp)
+                        .padding(20.dp)
+                ) { if (isLoading) {
+                    Text(text = "Loading weather data...", modifier = Modifier.padding(20.dp))
+                } else {
+                    weatherData?.let { data ->
+                        val currentWeatherCode = data.hourly.weather_code.firstOrNull() ?: 0
+                        val weatherDescription = getWeatherDescription(currentWeatherCode)
+                        Text(
+                            text = "Temperature: ${data.hourly.temperature_2m.firstOrNull()}°C",
+                            modifier = Modifier.padding(20.dp)
+                        ) //display temperature depending the country selected in the dropdown menu
+                        Text(
+                            text = "Weather: $weatherDescription",
+                            modifier = Modifier.padding(20.dp)
+                        )//display weather depending the country selected in the dropdown menu
+                    } ?: run {
+                        Text(
+                            text = "Failed to fetch weather data.",
+                            modifier = Modifier.padding(20.dp)
+                        )
+                    }
+                    }
+                }//card for weather api
                 SensorInfoCard(navController = navController)
                 //The card that host device actual information for sensor
             }
         }
     }
 }
+

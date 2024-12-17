@@ -73,9 +73,9 @@ fun SettingPage(navController: NavController) {
                             val y = it.values[1]
                             val z = it.values[2]
                             accelerometerData.value = "Accelerometer: x=$x, y=$y, z=$z"
-                            /*if (Math.abs(x) > 8 || Math.abs(y) > 8) {
+                            if (Math.abs(x) > 8 || Math.abs(y) > 8) {
                                 navController.navigate("home") // Redirect to home page with rotation
-                            }*/
+                            }
                         }
                     }
                 }
